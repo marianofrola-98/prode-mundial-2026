@@ -265,6 +265,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <button class="tab-btn" onclick="switchTab('login')">Ingresar</button>
     </div>
     <div id="alert-box" class="alert"></div>
+    <div id="form-reset" class="hidden">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.5">Ingresá tu email y te mandamos un link para restablecer tu contraseña.</p>
+      <div class="field"><label>Email</label><input type="email" id="reset-email" placeholder="camila@email.com"></div>
+      <button class="btn-primary" id="btn-reset" onclick="handleReset()">Mandar link de recuperación</button>
+      <button onclick="switchTab('login')" style="background:none;border:none;width:100%;text-align:center;margin-top:12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text2);cursor:pointer;text-decoration:underline;">Volver al login</button>
+    </div>
     <div id="form-registro">
       <div class="field"><label>Nombre completo</label><input type="text" id="reg-nombre" placeholder="ej: Camila Fernández"></div>
       <div class="field"><label>Email</label><input type="email" id="reg-email" placeholder="camila@email.com"></div>
@@ -286,6 +292,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="field"><label>Email</label><input type="email" id="login-email" placeholder="camila@email.com"></div>
       <div class="field"><label>Contraseña</label><input type="password" id="login-password" placeholder="Tu contraseña"></div>
       <button class="btn-primary" id="btn-login" onclick="handleLogin()">Ingresar</button>
+      <button onclick="switchTab('reset')" style="background:none;border:none;width:100%;text-align:center;margin-top:12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text2);cursor:pointer;text-decoration:underline;">Olvidé mi contraseña</button>
     </div>
   </div>
 </div>
@@ -425,6 +432,14 @@ let rankingVista = 'individual';
 
 // ── INIT ──
 async function init() {
+  // Detectar si venimos de un link de reset de contraseña
+  const hash = window.location.hash;
+  if (hash.includes('type=recovery')) {
+    await cargarEquipos();
+    showScreen('auth');
+    showResetPasswordForm();
+    return;
+  }
   showScreen('loading');
   await cargarEquipos();
   const { data: { session } } = await sb.auth.getSession();
@@ -434,6 +449,43 @@ async function init() {
     showScreen('home');
   } else {
     showScreen('auth');
+  }
+}
+
+function showResetPasswordForm() {
+  document.querySelector('.tabs').classList.add('hidden');
+  document.getElementById('form-registro').classList.add('hidden');
+  document.getElementById('form-login').classList.add('hidden');
+  document.getElementById('form-reset').classList.add('hidden');
+  document.getElementById('alert-box').insertAdjacentHTML('afterend', `
+    <div id="form-new-password">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.5">Ingresá tu nueva contraseña.</p>
+      <div class="field"><label>Nueva contraseña</label><input type="password" id="new-password" placeholder="Mínimo 8 caracteres"></div>
+      <div class="field"><label>Repetir contraseña</label><input type="password" id="new-password2" placeholder="Repetí la contraseña"></div>
+      <button class="btn-primary" id="btn-new-password" onclick="handleNewPassword()">Guardar nueva contraseña</button>
+    </div>
+  `);
+}
+
+async function handleNewPassword() {
+  const pass1 = document.getElementById('new-password').value;
+  const pass2 = document.getElementById('new-password2').value;
+  const btn = document.getElementById('btn-new-password');
+  if (pass1.length < 8) { showAlert('La contraseña debe tener al menos 8 caracteres.', 'error'); return; }
+  if (pass1 !== pass2) { showAlert('Las contraseñas no coinciden.', 'error'); return; }
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  clearAlert();
+  const { error } = await sb.auth.updateUser({ password: pass1 });
+  if (error) {
+    showAlert('Error al actualizar. Pedí un nuevo link.', 'error');
+    btn.disabled = false; btn.textContent = 'Guardar nueva contraseña';
+  } else {
+    showAlert('Contraseña actualizada. Ya podés ingresar.', 'success');
+    btn.disabled = false; btn.textContent = 'Guardar nueva contraseña';
+    document.getElementById('form-new-password').remove();
+    document.querySelector('.tabs').classList.remove('hidden');
+    switchTab('login');
+    history.replaceState(null, '', window.location.pathname);
   }
 }
 
@@ -922,8 +974,9 @@ function showAdminMsg(el,txt,tipo){el.textContent=txt;el.className='admin-msg '+
 // ── AUTH ──
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0)===(tab==='registro')));
-  document.getElementById('form-registro').classList.toggle('hidden',tab!=='registro');
-  document.getElementById('form-login').classList.toggle('hidden',tab!=='login');
+  document.getElementById('form-registro').classList.toggle('hidden', tab!=='registro');
+  document.getElementById('form-login').classList.toggle('hidden', tab!=='login');
+  document.getElementById('form-reset').classList.toggle('hidden', tab!=='reset');
   clearAlert();
 }
 
@@ -979,6 +1032,24 @@ async function handleLogout() {
   document.getElementById('btn-ir-admin').classList.add('hidden');
   document.getElementById('btn-ir-admin2').classList.add('hidden');
   showScreen('auth');
+}
+
+async function handleReset() {
+  const email = document.getElementById('reset-email').value.trim();
+  if (!email) { showAlert('Ingresá tu email.', 'error'); return; }
+  const btn = document.getElementById('btn-reset');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  clearAlert();
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.href
+  });
+  btn.disabled = false; btn.textContent = 'Mandar link de recuperación';
+  if (error) {
+    showAlert('Algo salió mal. Verificá el email e intentá de nuevo.', 'error');
+  } else {
+    showAlert('¡Listo! Si ese email está registrado, vas a recibir el link en unos minutos. Revisá también el spam.', 'success');
+    document.getElementById('reset-email').value = '';
+  }
 }
 
 function showAlert(msg,type){const b=document.getElementById('alert-box');b.textContent=msg;b.className='alert '+type;}
