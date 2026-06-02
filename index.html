@@ -753,6 +753,23 @@ function renderAdminCard(p) {
 
 function toggleAdminCard(id) { document.getElementById(id).classList.toggle('hidden'); }
 
+function toggleResultadoForm(pid) {
+  const estado = document.getElementById('estado-' + pid).value;
+  const form = document.getElementById('form-resultado-' + pid);
+  const hint = document.getElementById('hint-' + pid);
+  if (estado === 'finalizado') {
+    form.style.opacity = '1';
+    form.style.pointerEvents = 'auto';
+    form.style.userSelect = 'auto';
+    hint.innerHTML = 'Ingres\u00e1 el marcador final y guard\u00e1 para calcular puntos.';
+  } else {
+    form.style.opacity = '0.4';
+    form.style.pointerEvents = 'none';
+    form.style.userSelect = 'none';
+    hint.innerHTML = 'El marcador solo es necesario cuando el estado es <b>Finalizado</b>.';
+  }
+}
+
 async function guardarResultado(pid) {
   const estado=document.getElementById('estado-'+pid).value;
   const btn=document.getElementById('abtn-'+pid);
