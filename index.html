@@ -191,6 +191,52 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .spinner{width:36px;height:36px;border:3px solid rgba(240,236,198,.2);border-top-color:var(--cream);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.06em;color:var(--cream)}
+
+/* ── MOBILE ── */
+@media (max-width: 640px) {
+  .topbar{padding:0 .875rem;height:54px}
+
+  /* Logos más chicos */
+  .topbar-brand img{width:32px!important;height:32px!important;border-radius:6px!important}
+  .topbar-brand > div[style*="width:1px"]{height:20px!important}
+
+  /* Esconder título de texto */
+  .topbar-brand .topbar-logo{display:none}
+
+  /* Esconder botones de nav normales */
+  .topbar-right .btn-icon:not(.btn-hamburger){display:none}
+
+  /* Chip: solo avatar */
+  .u-name,.u-team{display:none}
+  .user-chip{padding:4px 6px}
+
+  /* Menú desplegable */
+  .mobile-menu{display:block}
+
+  /* Contenido */
+  .home-content,.ranking-content,.admin-content{padding:1rem .75rem}
+  .welcome-banner h2{font-size:20px}
+  .stat-block .num{font-size:32px}
+  .equipo-nombre{font-size:13px}
+  .grupos-nav{gap:5px}
+  .grupo-btn{padding:5px 10px;font-size:12px}
+
+  /* Auth */
+  .auth-title{font-size:38px}
+  .auth-card{padding:1.25rem}
+  .auth-logos img{width:64px!important;height:64px!important}
+}
+
+/* Mobile menu: oculto en desktop */
+.mobile-menu{display:none;position:relative}
+.btn-hamburger{background:rgba(240,236,198,.1);border:.5px solid rgba(240,236,198,.2);border-radius:var(--radius-sm);padding:6px 10px;font-size:20px;color:var(--cream);cursor:pointer;display:flex;align-items:center;justify-content:center;width:36px;height:36px}
+.dropdown-menu{position:absolute;right:0;top:calc(100% + 8px);background:var(--green-dark);border:.5px solid rgba(240,236,198,.15);border-radius:var(--radius);padding:6px;min-width:180px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.3);display:none;flex-direction:column;gap:4px}
+.dropdown-menu.open{display:flex}
+.dropdown-item{padding:10px 14px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--cream);cursor:pointer;display:flex;align-items:center;gap:10px;background:none;border:none;width:100%;text-align:left;transition:background .15s}
+.dropdown-item:hover{background:rgba(240,236,198,.1)}
+.dropdown-item.active{background:var(--pink);color:var(--green-dark)}
+.dropdown-item i{font-size:16px}
+.dropdown-sep{height:.5px;background:rgba(240,236,198,.15);margin:2px 0}
 </style>
 </head>
 <body>
@@ -262,6 +308,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <button class="btn-icon" onclick="irA('ranking')"><i class="ti ti-trophy" aria-hidden="true"></i> Ranking</button>
       <button class="btn-icon naranja hidden" id="btn-ir-admin" onclick="irA('admin')"><i class="ti ti-settings" aria-hidden="true"></i> Admin</button>
       <button class="btn-icon" onclick="handleLogout()"><i class="ti ti-logout" aria-hidden="true"></i> Salir</button>
+
+      <div class="mobile-menu">
+        <button class="btn-hamburger" onclick="toggleMenu('menu-home')" aria-label="Menú">☰</button>
+        <div class="dropdown-menu" id="menu-home">
+          <button class="dropdown-item active" onclick="closeMenu('menu-home')"><i class="ti ti-calendar" aria-hidden="true"></i> Partidos</button>
+          <button class="dropdown-item" onclick="closeMenu('menu-home');irA('ranking')"><i class="ti ti-trophy" aria-hidden="true"></i> Ranking</button>
+          <div class="dropdown-sep"></div>
+          <button class="dropdown-item" id="dd-admin-home" style="display:none" onclick="closeMenu('menu-home');irA('admin')"><i class="ti ti-settings" aria-hidden="true"></i> Admin</button>
+          <button class="dropdown-item" onclick="closeMenu('menu-home');handleLogout()"><i class="ti ti-logout" aria-hidden="true"></i> Salir</button>
+        </div>
+      </div>
     </div>
   </div>
   <div class="home-content">
@@ -295,6 +352,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <button class="btn-icon" onclick="irA('home')"><i class="ti ti-calendar" aria-hidden="true"></i> Partidos</button>
       <button class="btn-icon naranja hidden" id="btn-ir-admin2" onclick="irA('admin')"><i class="ti ti-settings" aria-hidden="true"></i> Admin</button>
       <button class="btn-icon" onclick="handleLogout()"><i class="ti ti-logout" aria-hidden="true"></i> Salir</button>
+
+      <div class="mobile-menu">
+        <button class="btn-hamburger" onclick="toggleMenu('menu-ranking')" aria-label="Menú">☰</button>
+        <div class="dropdown-menu" id="menu-ranking">
+          <button class="dropdown-item" onclick="closeMenu('menu-ranking');irA('home')"><i class="ti ti-calendar" aria-hidden="true"></i> Partidos</button>
+          <button class="dropdown-item active" onclick="closeMenu('menu-ranking')"><i class="ti ti-trophy" aria-hidden="true"></i> Ranking</button>
+          <div class="dropdown-sep"></div>
+          <button class="dropdown-item" id="dd-admin-ranking" style="display:none" onclick="closeMenu('menu-ranking');irA('admin')"><i class="ti ti-settings" aria-hidden="true"></i> Admin</button>
+          <button class="dropdown-item" onclick="closeMenu('menu-ranking');handleLogout()"><i class="ti ti-logout" aria-hidden="true"></i> Salir</button>
+        </div>
+      </div>
     </div>
   </div>
   <div class="ranking-content">
@@ -320,6 +388,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div class="topbar-right">
       <button class="btn-icon" onclick="irA('home')"><i class="ti ti-calendar" aria-hidden="true"></i> Partidos</button>
       <button class="btn-icon" onclick="handleLogout()"><i class="ti ti-logout" aria-hidden="true"></i> Salir</button>
+
+      <div class="mobile-menu">
+        <button class="btn-hamburger" onclick="toggleMenu('menu-admin')" aria-label="Menú">☰</button>
+        <div class="dropdown-menu" id="menu-admin">
+          <button class="dropdown-item" onclick="closeMenu('menu-admin');irA('home')"><i class="ti ti-calendar" aria-hidden="true"></i> Partidos</button>
+          <button class="dropdown-item" onclick="closeMenu('menu-admin');irA('ranking')"><i class="ti ti-trophy" aria-hidden="true"></i> Ranking</button>
+          <div class="dropdown-sep"></div>
+          <button class="dropdown-item" onclick="closeMenu('menu-admin');handleLogout()"><i class="ti ti-logout" aria-hidden="true"></i> Salir</button>
+        </div>
+      </div>
     </div>
   </div>
   <div class="admin-content">
@@ -817,6 +895,23 @@ async function guardarResultado(pid) {
 
   btn.disabled=false;btn.textContent='Guardar';
 }
+
+
+function toggleMenu(id) {
+  const menu = document.getElementById(id);
+  menu.classList.toggle('open');
+  // Cerrar otros menús abiertos
+  document.querySelectorAll('.dropdown-menu').forEach(m => { if(m.id !== id) m.classList.remove('open'); });
+}
+function closeMenu(id) {
+  document.getElementById(id).classList.remove('open');
+}
+// Cerrar menú al tocar fuera
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.mobile-menu')) {
+    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+  }
+});
 
 function showAdminMsg(el,txt,tipo){el.textContent=txt;el.className='admin-msg '+tipo;}
 
