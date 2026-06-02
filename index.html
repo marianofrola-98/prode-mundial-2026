@@ -733,18 +733,18 @@ function renderAdminCard(p) {
       <div class="admin-card-body hidden" id="ac-${p.id}">
         <div class="admin-estado-row">
           <label>Estado:</label>
-          <select class="admin-estado-select" id="estado-${p.id}">
+          <select class="admin-estado-select" id="estado-${p.id}" onchange="toggleResultadoForm('${p.id}')">
             <option value="pendiente" ${p.estado==='pendiente'?'selected':''}>Abierto — se aceptan pronósticos</option>
             <option value="cerrado" ${p.estado==='cerrado'?'selected':''}>Cerrado — partido en curso</option>
             <option value="finalizado" ${p.estado==='finalizado'?'selected':''}>Finalizado — cargar resultado abajo</option>
           </select>
         </div>
-        <div class="admin-form" style="${p.estado!=='finalizado'?'opacity:.45;pointer-events:none':''}">
+        <div class="admin-form" id="form-resultado-${p.id}" style="opacity:.45;pointer-events:none;user-select:none">
           <div class="admin-form-group"><label>${p.equipo_local}</label><input type="number" class="admin-score" min="0" max="20" id="adm-loc-${p.id}" value="${res?res.goles_local:''}" placeholder="0"></div>
           <div class="admin-form-dash">-</div>
           <div class="admin-form-group"><label>${p.equipo_visitante}</label><input type="number" class="admin-score" min="0" max="20" id="adm-vis-${p.id}" value="${res?res.goles_visitante:''}" placeholder="0"></div>
         </div>
-        <p style="font-size:11px;color:var(--text3);margin-bottom:8px">El marcador solo es necesario al marcar como <b>Finalizado</b>.</p>
+        <p id="hint-${p.id}" style="font-size:11px;color:var(--text3);margin-bottom:8px">El marcador solo es necesario cuando el estado es <b>Finalizado</b>.</p>
         <button class="btn-admin-guardar" id="abtn-${p.id}" onclick="guardarResultado('${p.id}')">Guardar</button>
         <div class="admin-msg hidden" id="amsg-${p.id}"></div>
       </div>
