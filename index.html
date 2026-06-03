@@ -999,8 +999,8 @@ async function handleRegistro() {
   setLoading('btn-registro',true);clearAlert();
   // Verificar límite de 10 por equipo
   const {count} = await sb.from('perfiles').select('*', {count:'exact',head:true}).eq('equipo_id', equipoId);
-  if (count >= 10) {
-    showAlert('Tu equipo ya alcanzó el máximo de 10 jugadores en el prode. Hablá con tu capitán.', 'error');
+  if (count >= 20) {
+    showAlert('Tu equipo ya alcanzó el máximo de 20 jugadores en el prode. Hablá con tu capitán.', 'error');
     setLoading('btn-registro', false);
     return;
   }
