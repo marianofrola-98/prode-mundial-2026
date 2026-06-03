@@ -613,8 +613,8 @@ function renderCard(p) {
   } else if (!abierto) {
     bottom=`<p style="font-size:12px;color:var(--text3);text-align:center;margin-top:6px">Pronóstico cerrado · No participaste</p>`;
   } else {
-    const lv=pron?`value="${pron.goles_local}"`:'placeholder="0"';
-    const vv=pron?`value="${pron.goles_visitante}"`:'placeholder="0"';
+    const lv=pron?`value="${pron.goles_local}"`:'placeholder="-"';
+    const vv=pron?`value="${pron.goles_visitante}"`:'placeholder="-"';
     const dis=pron?'disabled':'';
     const txt=pron?'Guardado ✓':'Guardar pronóstico';
     bottom=`
