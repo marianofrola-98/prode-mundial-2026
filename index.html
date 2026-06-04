@@ -627,9 +627,9 @@ function renderCard(p) {
     const txt=pron?'Guardado ✓':'Guardar pronóstico';
     bottom=`
       <div class="pronostico-form">
-        <input type="number" class="score-input" min="0" max="20" ${lv} id="loc-${p.id}" oninput="activarBtn('${p.id}')">
+        <input type="number" class="score-input" min="0" max="20" ${lv} id="loc-${p.id}" maxlength="2" oninput="activarBtn('${p.id}')">
         <div class="score-dash">-</div>
-        <input type="number" class="score-input" min="0" max="20" ${vv} id="vis-${p.id}" oninput="activarBtn('${p.id}')">
+        <input type="number" class="score-input" min="0" max="20" ${vv} id="vis-${p.id}" maxlength="2" oninput="activarBtn('${p.id}')">
       </div>
       <button class="btn-guardar" id="btn-${p.id}" onclick="guardar('${p.id}')" ${dis}>${txt}</button>`;
   }
