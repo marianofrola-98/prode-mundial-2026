@@ -1012,11 +1012,27 @@ async function handleRegistro() {
     setLoading('btn-registro', false);
     return;
   }
-  const {data,error}=await sb.auth.signUp({email,password});
+  const {data,error}=await sb.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        nombre_completo: nombre,
+        equipo_id: equipoId
+      }
+    }
+  });
   if(error){showAlert(errMsg(error.message),'error');setLoading('btn-registro',false);return;}
-  await sb.from('perfiles').insert({id:data.user.id,nombre_completo:nombre,equipo_id:equipoId});
-  await cargarPerfil(data.user);
-  await cargarPartidos();
+  // El perfil se crea automáticamente via trigger cuando confirma el email
+  // Mostramos mensaje de confirmación en vez de entrar directo
+  setLoading('btn-registro',false);
+  showAlert('¡Cuenta creada! Revisá tu email y confirmá tu cuenta para ingresar.','success');
+  document.getElementById('reg-nombre').value='';
+  document.getElementById('reg-email').value='';
+  document.getElementById('reg-password').value='';
+  document.getElementById('reg-equipo').value='';
+  document.getElementById('team-preview').classList.add('hidden');
+  return;
   setLoading('btn-registro',false);
   showScreen('home');
 }
