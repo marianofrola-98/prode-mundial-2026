@@ -675,7 +675,7 @@ async function cargarRanking() {
 
   // Traer todos los perfiles con sus equipos y sumar sus puntos
   const { data: perfiles } = await sb.from('perfiles').select('*, equipos(id, nombre)');
-  const { data: todosLosProns } = await sb.from('pronosticos').select('usuario_id, puntos').limit(10000);
+  const { data: todosLosProns } = await sb.from('pronosticos').select('usuario_id, puntos').limit(35000);
 
   // Sumar puntos por usuario
   const puntosXUsuario = {};
