@@ -673,16 +673,15 @@ async function cargarRanking() {
   document.getElementById('ranking-individual-container').innerHTML='<div style="text-align:center;padding:2rem;color:var(--text2)">Cargando...</div>';
   document.getElementById('ranking-equipos-container').innerHTML='';
 
-  // Traer todos los perfiles con sus equipos y sumar sus puntos
+  // Traer perfiles y puntos agregados en Supabase
   const { data: perfiles } = await sb.from('perfiles').select('*, equipos(id, nombre)');
-  const { data: todosLosProns } = await sb.from('pronosticos').select('usuario_id, puntos').limit(35000);
+  const { data: puntosData } = await sb.rpc('get_ranking_puntos');
 
-  // Sumar puntos por usuario
   const puntosXUsuario = {};
   const exactosXUsuario = {};
-  (todosLosProns || []).forEach(p => {
-    puntosXUsuario[p.usuario_id] = (puntosXUsuario[p.usuario_id] || 0) + (p.puntos || 0);
-    if (p.puntos === 3) exactosXUsuario[p.usuario_id] = (exactosXUsuario[p.usuario_id] || 0) + 1;
+  (puntosData || []).forEach(p => {
+    puntosXUsuario[p.usuario_id] = p.total_puntos;
+    exactosXUsuario[p.usuario_id] = p.total_exactos;
   });
 
   // Armar lista individual
